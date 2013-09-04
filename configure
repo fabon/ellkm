@@ -1,0 +1,65 @@
+#!/bin/sh
+
+rm -rf Makefile.rules
+case `uname -s` in
+ NetBSD)
+  echo 'CC = /usr/bin/g++' >> Makefile.rules
+  echo 'CFLAGS = -W -Wall  ' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+ SunOS)
+  echo 'CC=/usr/local/bin/g++' >> Makefile.rules
+  echo 'CFLAGS = -Wall -W -Werror -ansi  -fPIC' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+ Linux)
+  echo 'CC=g++' >> Makefile.rules
+  echo 'CFLAGS = -Wall -W -ansi' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+  Darwin)
+  echo 'CC=/usr/bin/g++' >> Makefile.rules
+  echo 'CFLAGS = -Wall -W -Werror -ansi  -fomit-frame-pointer' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+  OSF1)
+  echo 'CC=/bin/cc' >> Makefile.rules
+  echo 'CFLAGS = -w2 -std1 -warnprotos' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+  Darwin)
+  echo 'CC=/usr/bin/g++' >> Makefile.rules
+  echo 'CFLAGS = -Wall -W -Werror -ansi ' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+  HP-UX)
+  echo 'CC=/usr/local/bin/g++' >> Makefile.rules
+  echo 'CFLAGS = -W -Wall -Werror -ansi ' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+;;
+  CYGWIN_NT-5.1)
+  echo 'CC=g++' >> Makefile.rules
+  echo 'CFLAGS = -W -Wall' >> Makefile.rules
+  echo 'OPT_LINK = -shared' >> Makefile.rules
+esac
+
+#
+# binary
+#
+
+echo "OUT=kmeans_transmitters" >> Makefile.rules
+
+#
+# libs
+#
+
+echo "PWD=`pwd`" >> Makefile.rules
+#
+# misc
+#
+
+echo "ARCHI=`uname -s`" >> Makefile.rules
+echo "CLEAN=rm -rf *.*~ *~ *.o *\#*" >> Makefile.rules
+
+chmod 604 Makefile.rules
+
