@@ -5,13 +5,9 @@
 #include "similarity_function.hh"
 
 #define K				15
-//#define MIN_THRESHOLD			0.0000001
 #define MIN_THRESHOLD			0.000000001
 #define MAX_STEPS			20
- // #define WEIGHT_SKEWNESS			0
-// #define WEIGHT_SKEWNESS		0.14
- #define WEIGHT_SKEWNESS			0.2
-//#define DEFAULT_MAX_PRINT_DIMS	800000
+#define WEIGHT_SKEWNESS			0.14
 #define DEFAULT_MAX_PRINT_DIMS		12
 #define DEFAULT_MAX_PRINT_CENTROID_DIMS	112
 
@@ -97,9 +93,9 @@ namespace kmeans
   {
   public:
     KmeansSpherical(SimilarityFunction		*d,
-		unsigned			k = K,
-		unsigned			max_steps = MAX_STEPS,
-		double				min_threshold = MIN_THRESHOLD) :
+		    unsigned			k = K,
+		    unsigned			max_steps = MAX_STEPS,
+		    double			min_threshold = MIN_THRESHOLD) :
       Kmeans(d,
 	     k,
 	     max_steps,
@@ -117,43 +113,25 @@ namespace kmeans
     }
   };
 
-  class KmeansSphericalWeightedExp : public KmeansSpherical
+  class KmeansEllipsoidal : public KmeansSpherical
   {
   public:
-    KmeansSphericalWeightedExp(SimilarityFunction	*d,
-			       unsigned			k = K,
-			       unsigned			max_steps = MAX_STEPS,
-			       double			min_threshold = MIN_THRESHOLD) :
+    KmeansEllipsoidal(SimilarityFunction	*d,
+		      unsigned			k = K,
+		      unsigned			max_steps = MAX_STEPS,
+		      double			min_threshold = MIN_THRESHOLD) :
       KmeansSpherical(d,
 		      k,
 		      max_steps,
 		      min_threshold)
     {}
 
-    virtual ~KmeansSphericalWeightedExp() {}
+    virtual ~KmeansEllipsoidal() {}
 
   protected:
     virtual bool update_weigths();
 
   };
-
-  class KmeansSphericalWeightedEntropy : public KmeansSpherical
-  {
-  public:
-    KmeansSphericalWeightedEntropy(SimilarityFunction	*d,
-				   unsigned		k = K,
-				   unsigned		max_steps = MAX_STEPS,
-				   double		min_threshold = MIN_THRESHOLD) :
-      KmeansSpherical(d,
-		      k,
-		      max_steps,
-		      min_threshold)
-    {}
-  protected:
-    virtual bool update_weigths();
-
-  };
-
 };
 
 

@@ -5,7 +5,7 @@
 static int
 usage()
 {
-  std::cout << "./kmeans_transmitters < data_dir >" << std::endl;
+  std::cout << "./ellkm < data_dir >" << std::endl;
   return 2;
 }
 
@@ -64,15 +64,12 @@ int main(int argc,
        std::ostream_iterator<std::string>(std::cout,"\n"));
 
   kmeans::SimilarityFunction    *cosine_similarity = new kmeans::CosineSimilarity(2);
-  kmeans::Kmeans		*kmeans_exp = 0;
+  kmeans::Kmeans		*ellkm = 0;
 
-  kmeans_exp = new kmeans::KmeansSphericalWeightedExp(cosine_similarity);
-  // kmeans_batch = new kmeans::KmeansBatch(norme1);
-  // kmeans_batch = new kmeans::KmeansBatch(distance2);
+  ellkm = new kmeans::KmeansEllipsoidal(cosine_similarity);
 
-  kmeans_exp->run(data_paths);
-  //kmeans_entropy->run(data_paths);
+  ellkm->run(data_paths);
 
   delete cosine_similarity;
-  delete kmeans_exp;
+  delete ellkm;
 }

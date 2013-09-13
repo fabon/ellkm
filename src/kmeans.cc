@@ -272,35 +272,6 @@ namespace kmeans
 	buff << "]";
 	buff << std::endl;
 	buff << "Sparsity [" << my_sparsity(centroid->second) << "]" << std::endl;
-	{
-	  // buff << "Similarity infos : ";
-	  // buff << "min. [";
-	  // buff << *std::min_element(_centroids_distances[centroid->first].begin(),
-	  // 			    _centroids_distances[centroid->first].end());
-	  // buff << "] max. [ ";
-	  // buff << *std::max_element(_centroids_distances[centroid->first].begin(),
-	  //     			    _centroids_distances[centroid->first].end());
-	  // buff << "] avg. [";
-	  // buff << "avg. [";
-	  // double avg = 0;
-	  // for (t_vector_iterator jj = _centroids_distances[centroid->first].begin();
-	  //      jj != _centroids_distances[centroid->first].end();
-	  //      jj++)
-	  //   avg += *jj;
-	  // avg /= (double)_centroids_distances[centroid->first].size();
-
-	  // buff << avg;
-	  // buff << "] sd. [";
-	  // double var = 0;
-	  // for (t_vector_iterator jj = _centroids_distances[centroid->first].begin();
-	  //      jj != _centroids_distances[centroid->first].end();
-	  //      jj++)
-	  //   var += (avg - *jj) * (avg - *jj);
-	  // var /= (double)_centroids_distances[centroid->first].size();
-	  // buff << pow(var, (double)1/2) << "]";
-	  // buff << std::endl;
-	}
-
 	buff << "assigned points : " << std::endl;
 	for (unsigned ii = 0;
 	     ii < _partition.size();
@@ -830,7 +801,7 @@ namespace kmeans
   }
 
   bool
-  KmeansSphericalWeightedExp::update_weigths()
+  KmeansEllipsoidal::update_weigths()
   {
     t_unordered_matrix_iterator	centroid;
     t_vector			point;
@@ -857,20 +828,12 @@ namespace kmeans
 	     i++)
 	  if (_partition[i] == centroid->first)
 	    {
-	      // data_norm = 0;
-	      // for (j = 0;
-	      // 	   j < m;
-	      // 	   j++)
-	      // 	data_norm += pow(_data[i][j], 2);
-	      // data_norm = pow(data_norm, (double)1/2);
-
 	      if (cluster_data.empty())
 		cluster_data = t_vector(m, 0);
 	      for (j = 0;
 		   j < m;
 		   j++)
 		cluster_data[j] += _data[i][j];
-	        //cluster_data[j] += _data[i][j] / data_norm;
 	    }
 
 	_d->store(cluster_data,
@@ -914,12 +877,6 @@ namespace kmeans
 	std::cout << "sparsity [" << sparsity / m << "] " << std::endl;
 	_weights[centroid->first] = per_dimension_similarity;
       }
-    return true;
-  }
-
-  bool
-  KmeansSphericalWeightedEntropy::update_weigths()
-  {
     return true;
   }
 };

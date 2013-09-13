@@ -37,20 +37,13 @@ namespace kmeans
       unsigned	i = 0;
       double	norme = 0;
       unsigned  min_size = 0;
-      // double	acc_x =0;
-      // double	acc_y = 0;
 
       min_size = std::min(x.size(), y.size());
       while (i < min_size)
     	{
     	  norme += x[i] * y[i];
-    	  // acc_x += pow(x[i], _p);
-    	  // acc_y += pow(y[i], _p);
     	  ++i;
     	}
-      // acc_x = pow(acc_x, (double)1 / _p);
-      // acc_y = pow(acc_y, (double)1 / _p);
-      //return norme / (acc_x * acc_y);
       return norme;
     }
 
@@ -62,21 +55,14 @@ namespace kmeans
       unsigned	i = 0;
       double	norme = 0;
       unsigned  min_size = 0;
-      // double	acc_x = 0;
-      // double	acc_y = 0;
 
       min_size = std::min(x.size(), y.size());
       while (i < min_size)
 	{
 	  norme += w[i] * x[i] * y[i];
-	  // acc_x += pow(x[i], (double)_p);
- 	  // acc_y += pow(y[i], (double)_p);
 	  ++i;
 	}
 
-      // acc_x = pow(acc_x, (double)1 / _p);
-      // acc_y = pow(acc_y, (double)1 / _p);
-      // return norme / (acc_x * acc_y);
       return norme;
     }
 
@@ -87,22 +73,14 @@ namespace kmeans
     {
       unsigned	i = 0;
       unsigned  min_size = 0;
-      //double	acc_y = 0;
 
       res.clear();
       min_size = std::min(x.size(), y.size());
       while (i < min_size)
 	{
 	  res.push_back(x[i] * y[i]);
-	  //acc_y += pow(y[i], _p);
 	  ++i;
 	}
-      //acc_y = pow(acc_y, (double)1 / _p);
-
-      // for (i = 0;
-      // 	   i < min_size;
-      // 	   i++)
-      // 	res[i] /= (acc_y);
 
       return true;
     }

@@ -47,7 +47,7 @@ esac
 # binary
 #
 
-echo "OUT=kmeans_transmitters" >> Makefile.rules
+echo "OUT=ellkm" >> Makefile.rules
 
 #
 # libs
