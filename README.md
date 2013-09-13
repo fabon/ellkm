@@ -24,7 +24,7 @@ How to cite
 ========================================================================
 
 An ellipsoidal K-means for document clustering
-IEEE International Conference on Data Mining (ICDM'2012)
+12th IEEE International Conference on Data Mining (ICDM'2012) - pp. 221--230
 Dzogang, Fabon and Marsala, Christophe and Lesot, Marie-Jeanne and
 Rifqi, Maria 
 
@@ -45,19 +45,17 @@ dataset_dir is a directory structured as follow :
    - dataset_xx.csv
    - dataset_xx.csv
    - dataset_xx.csv
-Where xx is a numeric identifier, ellkm will process each datasets
-successively in increasing order of their identifiers.
+Where xx is a numeric identifier, ellkm will process each dataset
+successively in increasing order of their identifiers. Datasets may be
+associated with streamed textual data sampled over time.
 
-The actual csv files are `|' separated columns, a file typically
+The actual csv files are `|' separated columns. A file typically
 contains a matrix of n documents described as a vector of m
-dimensions.
-
-The first line the gives headers: description information about the
 features.
-The first column provides some alphanumeric identifier for each row
 
-A matrix of n documents described by a vector of m dimensions, is
-typically
+The first line gives headers information which provides descriptive
+information about each feature.
+The first column identifies each row with an alphanumeric identifier.
 
 ========================================================================
 Upcoming work 
