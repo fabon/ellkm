@@ -1,24 +1,5 @@
-##
-## Copyright 2013 Fabon Dzogang
-##
-## This file is part of ellkm.
-
-## ellkm is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## any later version.
-
-## ellkm is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-
-## You should have received a copy of the GNU General Public License
-## along with ellkm.  If not, see <http://www.gnu.org/licenses/>.
-##
-
 ========================================================================
-** Presentation **
+Presentation
 ========================================================================
 
 We propose an extension of the spherical K-means algorithm to deal
@@ -32,14 +13,14 @@ the complexity of this algorithm highlights that it is of same order
 as the regular K-means algorithm.
 
 ========================================================================
-** Keywords **
+Keywords 
 ========================================================================
 
 clustering, feature selection, spherical k-means, information
 retrieval.
 
 ========================================================================
-** How to cite **
+How to cite 
 ========================================================================
 
 An ellipsoidal K-means for document clustering
@@ -48,13 +29,13 @@ Dzogang, Fabon and Marsala, Christophe and Lesot, Marie-Jeanne and
 Rifqi, Maria 
 
 ========================================================================
-** Installation **
+Installation 
 ========================================================================
 
 cd < ellkm_directory > && ./configure && make
 
 ========================================================================
-** Binary description **
+Binary description 
 ========================================================================
 
 cd < ellkm_directory > && ./ellkm < dataset_dir > > log_run
@@ -79,7 +60,7 @@ A matrix of n documents described by a vector of m dimensions, is
 typically
 
 ========================================================================
-** Upcoming work **
+Upcoming work 
 ========================================================================
 
  - Command line options : sparsity parameter, number of clusters,
