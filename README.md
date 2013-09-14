@@ -13,32 +13,32 @@ the complexity of this algorithm highlights that it is of same order
 as the regular K-means algorithm.
 
 ========================================================================
-Keywords 
+Keywords
 ========================================================================
 
 clustering, feature selection, spherical k-means, information
 retrieval.
 
 ========================================================================
-How to cite 
+How to cite
 ========================================================================
 
 An ellipsoidal K-means for document clustering
 12th IEEE International Conference on Data Mining (ICDM'2012) - pp. 221--230
 Dzogang, Fabon and Marsala, Christophe and Lesot, Marie-Jeanne and
-Rifqi, Maria 
+Rifqi, Maria
 
 ========================================================================
-Installation 
+Installation
 ========================================================================
 
 cd < ellkm_directory > && ./configure && make
 
 ========================================================================
-Binary description 
+Binary description
 ========================================================================
 
-cd < ellkm_directory > && ./ellkm < dataset_dir > > log_run
+./ellkm < data_dir > < sparsity parameter (real number \\in [0,0.5], s=0 yields spkm) > < K (number of clusters) > > log_run
 
 dataset_dir is a directory structured as follow :
    - dataset_xx.csv
@@ -58,11 +58,11 @@ information about each feature.
 The first column identifies each row with an alphanumeric identifier.
 
 ========================================================================
-Upcoming work 
+Upcoming work
 ========================================================================
 
- - Command line options : sparsity parameter, number of clusters,
-   threshold value for objective function. Now this options needs to be
-   specified at compile time
+ - Command line options : maximum number of iterator (default to 20), minimum
+   threshold value for objective function (default to 10^(-9)). Now this options needs to be
+   specified at compile time (-D MAX_STEPS=XX -D MIN_THRESHOLD=XX)
 
  - R binding

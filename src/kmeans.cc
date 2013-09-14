@@ -34,10 +34,12 @@ namespace kmeans
 {
   Kmeans::Kmeans(SimilarityFunction		*d,
 		 unsigned			k,
+		 float				s,
 		 unsigned			max_steps,
 		 double				min_threshold)
   {
     _k = k;
+    _s = s;
     _max_steps = max_steps;
     _min_threshold = min_threshold;
 
@@ -783,7 +785,7 @@ namespace kmeans
     double			val = 0;
 
     m = _dims.size();
-    val = pow(1 / (double)m, WEIGHT_SKEWNESS); // useless to raise to the power here
+    val = pow(1 / (double)m, _s); // useless to raise to the power here
     //val = 1 / (double)m;
     if (0 > index_centroid)
       for (centroid = _centroids.begin();
@@ -797,7 +799,7 @@ namespace kmeans
   }
 
   bool
-  KmeansSpherical::optimize()
+  Kmeans::optimize()
   {
     if ((_current_run > 0 && _current_step == 0)) // transition from past day partition
       {
@@ -888,7 +890,7 @@ namespace kmeans
 	      ++sparsity;
 	    if (per_dimension_similarity[j] > 0)
 	      h -= per_dimension_similarity[j] * (log(per_dimension_similarity[j])/ log(m));
-	    per_dimension_similarity[j] = pow(per_dimension_similarity[j], WEIGHT_SKEWNESS);
+	    per_dimension_similarity[j] = pow(per_dimension_similarity[j], _s);
 	  }
 
 	std::cout << "sum [" << acc << "] ";

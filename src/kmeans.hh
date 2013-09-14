@@ -37,6 +37,7 @@ namespace kmeans
   public:
     Kmeans(SimilarityFunction		*d,
 	   unsigned			k = K,
+	   float			s = WEIGHT_SKEWNESS,
 	   unsigned			max_steps = MAX_STEPS,
 	   double			min_threshold = MIN_THRESHOLD);
 
@@ -71,9 +72,10 @@ namespace kmeans
     bool		initialize();
     unsigned		nb_active_centroids();
     unsigned		nb_inactive_centroids();
-    virtual bool	optimize() = 0;
+    virtual bool	optimize();
     bool		update_distances();
     bool		update_centroids();
+    virtual bool	update_weigths() = 0;
     bool		update_noweigths(int		index_centroid = -1);
 
     bool		sync_centroids_with_new_data();
@@ -82,6 +84,7 @@ namespace kmeans
 
     SimilarityFunction	*_d;
     unsigned		_k;
+    float		_s;
     unsigned		_max_steps;
     double		_min_threshold;
 
@@ -113,23 +116,20 @@ namespace kmeans
   public:
     KmeansSpherical(SimilarityFunction		*d,
 		    unsigned			k = K,
+		    float			s = WEIGHT_SKEWNESS,
 		    unsigned			max_steps = MAX_STEPS,
 		    double			min_threshold = MIN_THRESHOLD) :
       Kmeans(d,
 	     k,
+	     s,
 	     max_steps,
 	     min_threshold)
     {}
 
     virtual ~KmeansSpherical() {}
 
-    virtual bool optimize();
-
   protected:
-    virtual bool update_weigths()
-    {
-      return update_noweigths();
-    }
+    virtual bool update_weigths() { return false; }
   };
 
   class KmeansEllipsoidal : public KmeansSpherical
@@ -137,10 +137,12 @@ namespace kmeans
   public:
     KmeansEllipsoidal(SimilarityFunction	*d,
 		      unsigned			k = K,
+		      float			s = WEIGHT_SKEWNESS,
 		      unsigned			max_steps = MAX_STEPS,
 		      double			min_threshold = MIN_THRESHOLD) :
       KmeansSpherical(d,
 		      k,
+		      s,
 		      max_steps,
 		      min_threshold)
     {}
@@ -150,6 +152,7 @@ namespace kmeans
   protected:
     virtual bool update_weigths();
 
+    float _s;
   };
 };
 
