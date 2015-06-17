@@ -67,21 +67,23 @@ embedded in a m-dimensional feature spaces.
 
 The first column is the identifier of a data sample. All other columns described the data in feature space as
 follows:
+```
 	ids,feat1,feat2,feat3,feat4,feat5
 	1,0,0,1,0.5,0
 	2,0.05,1,0,0.5,0
 	...
 	400,0.3,0,0,0.125,0.32
 	...
-
+```
 Data can all also be given in sparse format:
+```
 	ids,feat1,feat2,feat3,feat4,feat5
 	1,2:0,1,3:0.5
 	2,1:0.05,2:1,4:0.5
 	...
 	400,1:0.3,4:0.125,5:0.32
 	...
-
+```
 FIXME Scientific notation?
 
 where sparse indices start at index 1 and are given in increasing order.
