@@ -94,18 +94,18 @@ Ellkm handle the addition of new features over time.
 ========================================================================
 What has changed
 ========================================================================
-v2.0)
- - input data can be read in sparse format
- - vectors are now outputed in sparse format
- - more readable output
- - weight vectors are now accessible on the standard output
-v1.0)
- - User centroids : it is now possible to provide ellkm with initial centroids, e.g
+- v2.0)
+  - input data can be read in sparse format
+  - vectors are now outputed in sparse format
+  - more readable output
+  - weight vectors are now accessible on the standard output
+- v1.0)
+  - User centroids : it is now possible to provide ellkm with initial centroids, e.g
    when K clusters make up a partition and ellkm is invoked with an additional `1`
    command line argument, then the first K lines of `data_dir` are used to initialise
    the K centroids.
- - a different seed (given by `time(0)`) is now used for each run
- - a bug led to the double insertion of the last point from each csv dataset.
+  - a different seed (given by `time(0)`) is now used for each run
+  - a bug led to the double insertion of the last point from each csv dataset.
 ========================================================================
 Upcoming work
 ========================================================================
