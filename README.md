@@ -106,10 +106,11 @@ What has changed
    the K centroids.
   - a different seed (given by `time(0)`) is now used for each run
   - a bug led to the double insertion of the last point from each csv dataset.
+
 ========================================================================
 Upcoming work
 ========================================================================
- - Command line options : maximum number of iteration (default to 20), minimum
+ - command line options : maximum number of iteration (default to 20), minimum
    threshold value for objective function (default to 10^(-9)). Now these options needs to be
    specified at compile time (-D MAX_STEPS=XX -D MIN_THRESHOLD=XX)
  - include gap procedure as described in [dzogang et al., 2012]
