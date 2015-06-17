@@ -13,9 +13,8 @@ the complexity of this algorithm highlights that it is of same order
 as the regular K-means algorithm.
 
 spherical K means implementations:
-
-	  - http://cran.r-project.org/web/packages/skmeans/index.html
-	  - http://www.mathworks.com/matlabcentral/fileexchange/32987-the-spherical-k-means-algorithm
+ - http://cran.r-project.org/web/packages/skmeans/index.html
+ - http://www.mathworks.com/matlabcentral/fileexchange/32987-the-spherical-k-means-algorithm
 
 ========================================================================
 Keywords
