@@ -412,7 +412,7 @@ buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
     // fixme intialiser sur les points qui vont dans les clusters
     // les plus fragiles ?
     // pour l'instant je prend les premiers points qui arrivent
-    // a condition qu'un centroid n'est pas déjà init dessus
+    // a condition qu'un centroid ne soit pas déjà init dessus
     for (unsigned i = 0; // k first data points
 	 _centroids.size() < _k && i < _data.size();
 	 i++)
