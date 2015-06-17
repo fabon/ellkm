@@ -2,15 +2,17 @@
 Presentation
 ========================================================================
 
-We propose an extension of the spherical K-means algorithm to deal
-with settings where the number of data points is largely inferior to
-the number of dimensions. We assume the data to lie in local and dense
-regions of the original space and we propose to embed each cluster
-into its specific ellipsoid. A new objective function is introduced,
-analytical solutions are derived and exploited for the update of both
-the centroids and the associated ellipsoids. Furthermore, a study on
-the complexity of this algorithm highlights that it is of same order
-as the regular K-means algorithm.
+We propose an extension of the spherical K-means algorithm
+(http://cran.r-project.org/web/packages/skmeans/index.html,
+http://www.mathworks.com/matlabcentral/fileexchange/32987-the-spherical-k-means-algorithm)
+to deal with settings where the number of data points is largely
+inferior to the number of dimensions. We assume the data to lie in
+local and dense regions of the original space and we propose to embed
+each cluster into its specific ellipsoid. A new objective function is
+introduced, analytical solutions are derived and exploited for the
+update of both the centroids and the associated
+ellipsoids. Furthermore, a study on the complexity of this algorithm
+highlights that it is of same order as the regular K-means algorithm.
 
 ========================================================================
 Keywords
