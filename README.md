@@ -86,7 +86,7 @@ follows:
 Data can all also be given in sparse format:
 ```
 	ids,feat1,feat2,feat3,feat4,feat5
-	1,2:0,1,3:0.5
+	1,3:1,4:0.5
 	2,1:0.05,2:1,4:0.5
 	...
 	400,1:0.3,4:0.125,5:0.32
