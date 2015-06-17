@@ -50,7 +50,9 @@ run in a terminal:
 Description of the packaged binary
 ========================================================================
 
+```
 ./ellkm < data_dir > < sparsity parameter (real \\in [0,0.5], s=0 yields spkm) > < K > [ user_centroids 1 | 0] > log_run
+```
 
 dataset_dir is a directory structured as follow :
    - dataset_1.csv
