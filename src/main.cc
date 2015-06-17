@@ -21,13 +21,13 @@
 #include <dirent.h>
 #include <errno.h>
 #include <limits.h>
+#include <boost/algorithm/string/predicate.hpp>
 #include "kmeans.hh"
-
 
 static int
 usage()
 {
-  std::cout << "./ellkm < data_dir > < sparsity parameter (real number \\in [0,0.5], s=0 yields spkm) > < K (number of clusters) >" << std::endl;
+  std::cout << "./ellkm < data_dir > < sparsity parameter (real number \\in [0,0.5], s=0 yields spkm) > < K (number of clusters) > [ user centroids 0 | 1 ]" << std::endl;
   return 2;
 }
 
@@ -38,14 +38,17 @@ compare_filenames (const std::string &s1, const std::string &s2)
   std::string id;
   int	id1, id2;
 
+
   pos1 = s1.find_last_of("_");
   pos2 = s1.find_last_of(".");
   id = s1.substr(pos1 + 1, pos2 - (pos1 + 1));
+  //std::cout << id << std::endl;
   id1 = atoi(id.c_str());
 
   pos1 = s2.find_last_of("_");
   pos2 = s2.find_last_of(".");
   id = s2.substr(pos1 + 1, pos2 - (pos1 + 1));
+  //std::cout << id << std::endl;
   id2 = atoi(id.c_str());
 
   return (id1 < id2);
@@ -105,16 +108,21 @@ int main(int argc,
   float				s_value = WEIGHT_SKEWNESS;
   long				k_value = K;
 
-  if (argc != 4)
+  if (argc > 5)
     return usage();
+
+  bool user_centroids =
+    argc == 5 && argv[4] && *argv[4] - '0' == 1;
 
   dir_name = argv[1];
   if ( !my_strtof(argv[2], s_value) ||
        !my_strtol(argv[3], k_value))
     return usage();
+  kmeans::copyright();
 
-  std::cout << s_value << std::endl;
-  std::cout << k_value << std::endl;
+  std::cout << "s value [" << s_value << "]" << std::endl;
+  std::cout << "number of clusters [" << k_value << "]" << std::endl;
+  std::cout << "user given centroids [" << user_centroids << "]" << std::endl;
 
   if (!(dir = opendir(argv[1])))
     return usage();
@@ -122,10 +130,10 @@ int main(int argc,
   while((entry = readdir(dir)))
     {
       filename = entry->d_name;
-      if (std::string::npos != filename.find(".csv"))
+      if (boost::algorithm::ends_with(filename, ".csv"))
 	{
 	  filename = dir_name;
-	  filename += "/";
+	  filename += dir_name[strlen(dir_name) - 1] != '/' ? "/" : "";
 	  filename += entry->d_name;
 	  data_paths.push_back(filename);
 	}
@@ -139,13 +147,15 @@ int main(int argc,
        data_paths.end(),
        std::ostream_iterator<std::string>(std::cout,"\n"));
 
-  kmeans::SimilarityFunction    *cosine_similarity = new kmeans::CosineSimilarity(2);
-  kmeans::Kmeans		*ellkm = 0;
+  kmeans::SimilarityFunction		*cosine_similarity = new kmeans::CosineSimilarity(2);
+  kmeans::KmeansEllipsoidal		*ellkm = 0;
 
   ellkm = new kmeans::KmeansEllipsoidal(cosine_similarity,
 					k_value,
 					s_value);
-  ellkm->run(data_paths);
+  if (!ellkm->run(data_paths, user_centroids)) {
+    return 3;
+  }
 
   delete cosine_similarity;
   delete ellkm;

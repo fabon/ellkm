@@ -72,6 +72,7 @@ echo "OUT=ellkm" >> Makefile.rules
 # libs
 #
 
+echo "INCLUDES=../libs/boost_1_56_0/" >> Makefile.rules
 echo "PWD=`pwd`" >> Makefile.rules
 #
 # misc

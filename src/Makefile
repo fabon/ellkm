@@ -37,10 +37,10 @@ all: $(OUT)
 $(OBJ): $(HEADER)
 
 .cc.o : $< $(SRC) $(HEADER)
-	$(CC) $(CFLAGS) -std=c++0x -c $< -o $@
+	$(CC) -I$(INCLUDES) $(CFLAGS) -std=c++0x -c $< -o $@
 
 $(OUT): $(OBJ)
-	$(CC) $(OBJ) -o $(OUT) 
+	$(CC) $(OBJ) -o $(OUT)
 
 clean:
 	$(CLEAN)

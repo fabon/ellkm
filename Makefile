@@ -29,8 +29,8 @@ distclean: clean
 	cd src/ && make distclean && cd ../ && rm -f Makefile.rules
 
 dist: distclean
-	cd ../ && tar cvjf dzogan_f-libdata.tar.bz2 --exclude=*.svn dzogan_f-libdata/ &&	\
-	chmod 705 dzogan_f-libdata.tar.bz2
+	cd ../ && tar czf ellkm.tar.gz --exclude=*.svn --exclude=*.git* ellkm/ &&	\
+	chmod 705 ellkm.tar.gz
 
 debug: clean
 	cd src/ && make debug

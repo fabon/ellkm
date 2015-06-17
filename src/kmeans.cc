@@ -20,9 +20,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <boost/foreach.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/iterator/counting_iterator.hpp>
 #include <limits.h>
 #include <float.h>
 #include <sstream>
@@ -32,7 +29,7 @@
 
 namespace kmeans
 {
-  Kmeans::Kmeans(SimilarityFunction		*d,
+  KmeansEllipsoidal::KmeansEllipsoidal(SimilarityFunction		*d,
 		 unsigned			k,
 		 float				s,
 		 unsigned			max_steps,
@@ -51,7 +48,7 @@ namespace kmeans
   }
 
   void
-  Kmeans::print_data()
+  KmeansEllipsoidal::print_data()
   {
     unsigned nrow = 0;
     unsigned ncol = 0;
@@ -83,7 +80,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::calc_centroid_changement(unsigned		centroid_index,
+  KmeansEllipsoidal::calc_centroid_changement(unsigned		centroid_index,
 				   double		&changement)
   {
     if (_old_centroids.empty())
@@ -95,7 +92,7 @@ namespace kmeans
   }
 
   void
-  Kmeans::calc_data_dims_infos(std::stringstream   &buff)
+  KmeansEllipsoidal::calc_data_dims_infos(std::stringstream   &buff)
   {
     t_strings_matrix	aged_dims;
     t_vector		min_vals;
@@ -155,11 +152,11 @@ namespace kmeans
   }
 
   void
-  Kmeans::calc_data_similarity_infos(std::stringstream   &buff)
+  KmeansEllipsoidal::calc_data_similarity_infos(std::stringstream   &buff)
   {
     double	current_d, min_d, max_d;
     double	acc_d = 0;
-
+    unsigned    count = 0;
     for (unsigned i = 0;
 	 i < _data.size();
 	 i++)
@@ -173,16 +170,17 @@ namespace kmeans
 	if (max_d < current_d)
 	  max_d = current_d;
 	acc_d += current_d;
+	++count;
       }
     buff << "Data similarity infos :";
     buff << "min [" << min_d;
     buff << "] max [" << max_d;
-    buff << "] avg. [" << acc_d / (double)(_data.size() * _data.size()) - _data.size() << "]";
+    buff << "] avg. [" << acc_d / (double)count  << "]";
     buff << std::endl;
   }
 
   void
-  Kmeans::calc_global_buzz_words(unsigned		n,
+  KmeansEllipsoidal::calc_global_buzz_words(unsigned		n,
 				 std::stringstream	&buff)
   {
     t_vector words = t_vector(_dims.size(), 0);
@@ -203,7 +201,7 @@ namespace kmeans
   }
 
   void
-  Kmeans::print_objective()
+  KmeansEllipsoidal::print_objective()
   {
     std::cout << std::endl;
     std::cout << "Step (" << _current_step << ") ";
@@ -211,7 +209,7 @@ namespace kmeans
   }
 
   double
-  Kmeans::calc_global_centroids_sparsity()
+  KmeansEllipsoidal::calc_global_centroids_sparsity()
   {
     double global_sparsity = 0;
 
@@ -241,8 +239,20 @@ namespace kmeans
     return 1 - (sparsity / v.size());
   }
 
+  static unsigned
+  my_nonzero(t_vector	&v)
+  {
+    unsigned cpt = 0;
+    for (unsigned j = 0;
+	 j < v.size();
+	 j++)
+      cpt += v[j] > 0;
+
+    return cpt;
+  }
+
   void
-  Kmeans::print_snapshot(bool			detailed)
+  KmeansEllipsoidal::print_snapshot(bool			detailed)
   {
     t_unordered_matrix_iterator	centroid;
     t_unordered_vector_iterator	component;
@@ -252,54 +262,74 @@ namespace kmeans
     buff.str("");
     buff << std::endl;
     //calc_data_dims_infos(buff);
-    calc_data_similarity_infos(buff);
-    buff << "Global sparsity [" << calc_global_centroids_sparsity() << "] ";
-    buff << "Nb data points [" << _data.size() << "] ";
-    buff << "Dimensionality ["  << _dims.size() << "]";
-    buff << "\n";
-    buff << "Active centroids: " << nb_active_centroids() << "/" << _k << std::endl;
+    //calc_data_similarity_infos(buff);
+    //buff << "Global sparsity [" << calc_global_centroids_sparsity() << "] ";
+buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
+    buff << "NbPts=" << _data.size() << " ";
+    buff << "NbFeats="  << _dims.size() << " " << std::endl;
     buff << "Buzz words:";
     calc_global_buzz_words(DEFAULT_MAX_PRINT_DIMS,
-			   buff);
+    			   buff);
     buff << std::endl;
 
+    unsigned nb_dims_to_print = detailed ? _dims.size() : DEFAULT_MAX_PRINT_DIMS;
     for (centroid =  _centroids.begin();
 	 centroid != _centroids.end();
 	 centroid++)
       {
-	buff << "c"  << centroid->first;
-	buff << " {#" << _centroids_sizes[centroid->first] << "} :";
-	if (detailed)
-	  calc_n_highest_dims(centroid->second,
-			     _dims.size(),
-			      true,
-			      buff);
-	else
-	  calc_n_highest_dims(centroid->second,
-			      DEFAULT_MAX_PRINT_CENTROID_DIMS,
-			      true,
-			      buff);
-	buff << std::endl;
+	unsigned i = centroid->first + 1;
+	buff << std::endl << "** centroid{"  << i << "/" << _centroids.size() << "} ";
+	buff << " NbPts=" << _centroids_sizes[centroid->first] << " ";
+	buff << "Fobj(c" << i << ", data)=" << _local_objective_values[centroid->first] << " ";
+	buff << "Sparsity=" << my_sparsity(centroid->second) << "% ";
+	buff << "NonZeroFeats=" << my_nonzero(centroid->second) << std::endl;
 
-	buff << "Sparsity [" << _sparsities[centroid->first] << "] ";
-	buff << "Local Fobj [" << _local_objective_values[centroid->first] << "] ";
-	buff << "similarity with last [";
-	double sim = 0;
-	if (false && !calc_centroid_changement(centroid->first,
-					       sim))
-	  buff << "n/a";
-	else
-	  buff << sim;
-	buff << "]";
+	buff << "feats:";
+	calc_n_highest_dims(centroid->second,
+			    nb_dims_to_print,
+			    true,
+			    buff);
 	buff << std::endl;
-	buff << "Sparsity [" << my_sparsity(centroid->second) << "]" << std::endl;
-	buff << "assigned points : " << std::endl;
+	buff << "lambda:";
+	t_vector q(_weights[centroid->first]);
+	 for (unsigned j = 0;
+	      j <_dims.size();
+	      j++)
+	   q[j] = pow(q[j], 1.0/_s);
+	 //	   q[j] = pow(q[j], 1.0/(_s > 0.0 ? _s : 1.0));
+	calc_n_highest_dims(q,
+			    nb_dims_to_print,
+			    false,
+			    buff);
+	buff << std::endl;
+	// buff << "weights:";
+	// calc_n_highest_dims(_weights[centroid->first],
+	// 		    nb_dims_to_print,
+	// 		    true,
+	// 		    buff);
+	// buff << std::endl;
+
+	//buff << "Sparsity [" << _sparsities[centroid->first] << "] ";
+
+	// buff << "similarity with last [";
+	// double sim = 0;
+	// if (false && !calc_centroid_changement(centroid->first,
+	// 				       sim))
+	//   buff << "n/a";
+	// else
+	//   buff << sim;
+	// buff << "]";
+	// buff << std::endl;
+	buff << "pts:";
+	bool first = true;
 	for (unsigned ii = 0;
 	     ii < _partition.size();
 	     ii++)
-	  if (_partition[ii] == centroid->first)
-	    buff << "{" << _ids[ii] << "}" << std::endl;
-
+	    if (_partition[ii] == centroid->first)
+	      {
+		buff << (!first ? "," : "") << _ids[ii];
+		first = false;
+	      }
 	buff << std::endl;
       }
 
@@ -307,7 +337,21 @@ namespace kmeans
   }
 
   bool
-  Kmeans::initialize_random()
+  KmeansEllipsoidal::initialize_centroid_from_input(t_vector input_centroid)
+  {
+    if (_centroids.size() == _k)
+      return false;
+
+    _centroids[_max_index_centroid] = input_centroid;
+    normalize_vector(_centroids[_max_index_centroid]);
+    update_noweigths(_max_index_centroid);
+    ++_max_index_centroid;
+
+    return true;
+  }
+
+  bool
+  KmeansEllipsoidal::initialize_random()
   {
     t_unordered_matrix_iterator		centroid;
     t_vector				random_centroid;
@@ -317,7 +361,7 @@ namespace kmeans
 
     seed = time(0);
     //seed = 1324571606;
-    seed = 1325012148;
+    //seed = 1325012148;
     srand(seed);
     std::cout << "srand seed value " << seed << std::endl;
 
@@ -359,7 +403,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::initialize_first_k_prototypes()
+  KmeansEllipsoidal::initialize_first_k_prototypes()
   {
     t_vector			new_centroid;
     t_unordered_matrix_iterator centroid;
@@ -385,7 +429,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::initialize()
+  KmeansEllipsoidal::initialize()
   {
 
     if (!_data.size())
@@ -405,7 +449,7 @@ namespace kmeans
   };
 
   bool
-  Kmeans::calc_n_highest_words(unsigned			n,
+  KmeansEllipsoidal::calc_n_highest_words(unsigned			n,
 			       std::stringstream	&buff)
   {
     t_vector	dim_count;
@@ -431,17 +475,14 @@ namespace kmeans
 
     i = 0;
     for (s_it = s.begin();
-	 s_it != s.end() && i < n;
+	 s_it != s.end() && ++i < n;
 	 s_it++)
-      {
-	buff << i << ": " << s_it->first << "[" << s_it->second << "]  ";
-	++i;
-      }
+	buff << s_it->first << ":" << s_it->second << " ";
     return true;
   }
 
   bool
-  Kmeans::calc_n_highest_dims(t_vector		&v,
+  KmeansEllipsoidal::calc_n_highest_dims(t_vector		&v,
 			      unsigned		n,
 			      bool		normalized,
 			      std::stringstream	&buff)
@@ -476,17 +517,15 @@ namespace kmeans
 
     i = 0;
     for (s_it = s.begin();
-	 s_it != s.end() && i < n;
+	 s_it != s.end() && ++i < n;
 	 s_it++)
-      {
-	buff << i << ": " << s_it->first << "[" << s_it->second << "]  ";
-	++i;
-      }
+      if (s_it->second > 0)
+	buff << s_it->first << ":" << s_it->second << " ";
     return true;
   }
 
   bool
-  Kmeans::sync_centroids_with_new_data()
+  KmeansEllipsoidal::sync_centroids_with_new_data()
   {
     t_unordered_matrix_iterator	centroid;
     t_vector			updated_centroid;
@@ -553,16 +592,49 @@ namespace kmeans
   }
 
   bool
-  Kmeans::read_data(std::string		data_filepath,
-		    const char		*delimiter,
-		    bool		headers)
+  KmeansEllipsoidal::add_data_point_coord(boost::char_separator<char>	&sparse_delim,
+					  std::string			&token,
+					  t_vector			&vector)
+  {
+    boost::tokenizer< boost::char_separator<char> > toks (token, sparse_delim);
+    boost::tokenizer< boost::char_separator<char> >::iterator tok = toks.begin();
+
+    size_t index = (size_t)atoi(tok->c_str());
+
+    if (++tok == toks.end())
+      {
+	vector.push_back(atof(token.c_str()));
+	return true;
+      }
+
+    if (index <= vector.size())
+      return false;
+
+    for (size_t i = vector.size(); i < (index - 1); i++)
+      vector.push_back(0.0);
+
+    const std::string *val_str = &(*tok);
+    raw_type val = atof(val_str->c_str());
+
+    vector.push_back(val);
+    return true;
+  }
+
+  bool
+  KmeansEllipsoidal::read_data(std::string		data_filepath,
+			       const char		*delimiter,
+			       bool			headers,
+			       bool			user_centroids)
   {
     std::ifstream		f;
     std::string			line;
     std::string			token;
     t_vector			vector;
     bool			first_column = true;
+    t_unordered_matrix		input_centroids;
+    boost::char_separator<char> sparse_delim(":");
 
+    size_t line_number = 2; //jump the headers
     _ids.clear();
     _data.clear();
 
@@ -592,26 +664,51 @@ namespace kmeans
 		  _dims.push_back(token);
 	      }
 	    //_dims.push_back("BIAS");
-
 	    headers = false;
+	    line.clear();
+	    continue;
 	  }
-	else
+	first_column = true;
+	foreach(token, tokens)
 	  {
-	    first_column = true;
-	    foreach(token, tokens)
+	    if (first_column)
 	      {
-		if (first_column)
-		  {
-		    _ids.push_back(token);
-		    first_column = false;
-		  }
-		else
-		  vector.push_back(atof(token.c_str()));
+		_ids.push_back(token);
+		first_column = false;
+		continue;
 	      }
-	    //vector.push_back(1);
-	    _data.push_back(vector);
-	    vector.clear();
+	    if (!add_data_point_coord(sparse_delim, token, vector))
+	      {
+		std::cerr << "Input file " << data_filepath << ", l." << line_number;
+		std::cerr << ". Please correct the format of data point id " << _ids.back() << std::endl;
+		std::cerr << "(see the README for more details about the correct format)" << std::endl;
+		return false;
+	      }
 	  }
+	//vector.push_back(1);
+
+	if (vector.size() > _dims.size())
+	  {
+	    std::cerr << "Input file " << data_filepath << ", l." << line_number;
+	    std::cerr << ". Please correct the format of data point id " << _ids.back() << std::endl;
+	    std::cerr << "(the header line, " << _dims.size() << " features, does not match with sparse index ";
+	    std::cerr << vector.size() << ")" << std::endl;
+	    return false;
+	  }
+
+	while (vector.size() < _dims.size())
+	  vector.push_back(0.0); //sparse format
+
+	if (user_centroids &&
+	    initialize_centroid_from_input(vector))
+	  std::cout << "added new centroid [" << _centroids.size() << "/" << _k << "]" <<std::endl;
+	else
+	  _data.push_back(vector);
+
+	//print_vector(vector);
+	vector.clear();
+	line.clear();
+	line_number++;
       }
     f.close();
 
@@ -619,19 +716,20 @@ namespace kmeans
   }
 
   unsigned
-  Kmeans::nb_active_centroids()
+  KmeansEllipsoidal::nb_active_centroids()
   {
     return _centroids.size();
   }
 
   unsigned
-  Kmeans::nb_inactive_centroids()
+  KmeansEllipsoidal::nb_inactive_centroids()
   {
     return _k - _centroids.size();
   }
 
   bool
-  Kmeans::run(t_strings			data_updates_filepaths)
+  KmeansEllipsoidal::run(t_strings			data_updates_filepaths,
+			 bool				user_centroids)
   {
     t_string_iterator	data_update_filepath;
     double	        last_objective_value = 0;
@@ -644,15 +742,17 @@ namespace kmeans
 	std::cout << std::endl << "***************************" << std::endl;
 	std::cout << "Run (" << _current_run << ")";
 	std::cout << std::endl << "***************************" << std::endl;
-	read_data(*data_update_filepath,
-		  "|",
-		  true);
+	if (!read_data(*data_update_filepath,
+		  CSV_DELIM,
+		  true,
+		       user_centroids))
+	  return false;
 	//print_data();
 
 	buff.str("");
 	calc_n_highest_words(DEFAULT_MAX_PRINT_DIMS,
 			     buff);
-	std::cout << "Max words so far : " << buff.str() << std::endl;
+	std::cout << "** HighestFreqWordsInData:" << buff.str() << std::endl;
 
 	if (0 < nb_inactive_centroids())
 	  {
@@ -685,7 +785,7 @@ namespace kmeans
 	if (!(_current_step < _max_steps))
 	  std::cout << "Max nb steps reached (max nb steps: " << _max_steps << ")." << std::endl;
 
-	print_snapshot(false);
+	print_snapshot(true);
 	_old_centroids = _centroids;
 	_nb_steps.push_back(_current_step);
 	++_current_run;
@@ -694,7 +794,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::update_centroids()
+  KmeansEllipsoidal::update_centroids()
   {
     t_unordered_matrix			new_centroids;
     unsigned				index_centroid = 0;
@@ -734,7 +834,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::update_distances()
+  KmeansEllipsoidal::update_distances()
   {
     t_unordered_matrix_iterator		centroid;
     t_vector				point;
@@ -778,7 +878,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::update_noweigths(int	index_centroid)
+  KmeansEllipsoidal::update_noweigths(int	index_centroid)
   {
     t_unordered_matrix_iterator	centroid;
     unsigned			m = 0;
@@ -799,7 +899,7 @@ namespace kmeans
   }
 
   bool
-  Kmeans::optimize()
+  KmeansEllipsoidal::optimize()
   {
     if ((_current_run > 0 && _current_step == 0)) // transition from past day partition
       {

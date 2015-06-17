@@ -20,6 +20,10 @@
 #ifndef K_MEANS_HH
 # define K_MEANS_HH
 
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/iterator/counting_iterator.hpp>
+
 #include "data_types.hh"
 #include "similarity_function.hh"
 
@@ -29,25 +33,38 @@
 #define WEIGHT_SKEWNESS			0.14
 #define DEFAULT_MAX_PRINT_DIMS		12
 #define DEFAULT_MAX_PRINT_CENTROID_DIMS	112
+#define CSV_DELIM			","
 
 namespace kmeans
 {
-  class Kmeans
+  inline void copyright()
+  {
+    std::cout <<
+      "ellkm  Copyright (C) 2013  Fabon Dzogang\n"
+      "This program comes with ABSOLUTELY NO WARRANTY.\n"
+      "This is free software, and you are welcome to redistribute it\n"
+      "under certain conditions; run `ellkm help' for details.\n"
+	      << std::endl;
+  }
+
+  class KmeansEllipsoidal
   {
   public:
-    Kmeans(SimilarityFunction		*d,
+    KmeansEllipsoidal(SimilarityFunction		*d,
 	   unsigned			k = K,
 	   float			s = WEIGHT_SKEWNESS,
 	   unsigned			max_steps = MAX_STEPS,
 	   double			min_threshold = MIN_THRESHOLD);
 
-    virtual ~Kmeans() {}
+    ~KmeansEllipsoidal() {}
 
     bool		read_data(std::string	data_filepath,
 				  const char    *delimiter = ",",
-				  bool		headers = true);
+				  bool		headers = true,
+				  bool		user_centroids = false);
 
-    bool		run(t_strings		data_updates_filepaths);
+    bool		run(t_strings		data_updates_filepaths,
+			    bool		user_centroids);
 
     void		print_objective();
     void		print_snapshot(bool				detailed = false);
@@ -65,17 +82,20 @@ namespace kmeans
 					    unsigned		n,
 					    bool		normalized,
 					    std::stringstream	&buff);
-
   protected:
+    bool		add_data_point_coord(boost::char_separator<char>	&sparse_delim,
+					     std::string			&token,
+					     t_vector				&vector);
     bool		initialize_random();
+    bool		initialize_centroid_from_input(t_vector input_centroid);
     bool		initialize_first_k_prototypes();
     bool		initialize();
     unsigned		nb_active_centroids();
     unsigned		nb_inactive_centroids();
-    virtual bool	optimize();
+    bool		optimize();
     bool		update_distances();
     bool		update_centroids();
-    virtual bool	update_weigths() = 0;
+    bool		update_weigths();
     bool		update_noweigths(int		index_centroid = -1);
 
     bool		sync_centroids_with_new_data();
@@ -109,50 +129,6 @@ namespace kmeans
     unsigned		_current_run;
 
     t_vector		_partition;
-  };
-
-  class KmeansSpherical : public Kmeans
-  {
-  public:
-    KmeansSpherical(SimilarityFunction		*d,
-		    unsigned			k = K,
-		    float			s = WEIGHT_SKEWNESS,
-		    unsigned			max_steps = MAX_STEPS,
-		    double			min_threshold = MIN_THRESHOLD) :
-      Kmeans(d,
-	     k,
-	     s,
-	     max_steps,
-	     min_threshold)
-    {}
-
-    virtual ~KmeansSpherical() {}
-
-  protected:
-    virtual bool update_weigths() { return false; }
-  };
-
-  class KmeansEllipsoidal : public KmeansSpherical
-  {
-  public:
-    KmeansEllipsoidal(SimilarityFunction	*d,
-		      unsigned			k = K,
-		      float			s = WEIGHT_SKEWNESS,
-		      unsigned			max_steps = MAX_STEPS,
-		      double			min_threshold = MIN_THRESHOLD) :
-      KmeansSpherical(d,
-		      k,
-		      s,
-		      max_steps,
-		      min_threshold)
-    {}
-
-    virtual ~KmeansEllipsoidal() {}
-
-  protected:
-    virtual bool update_weigths();
-
-    float _s;
   };
 };
 
