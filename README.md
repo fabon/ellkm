@@ -84,8 +84,6 @@ Data can all also be given in sparse format:
 	400,1:0.3,4:0.125,5:0.32
 	...
 ```
-FIXME Scientific notation?
-
 where sparse indices start at index 1 and are given in increasing order.
 
 The number of columns of the N input files need not be equal.
@@ -95,7 +93,7 @@ Ellkm handle the addition of new features over time.
 What has changed
 ========================================================================
 - v2.0)
-  - input data can be read in sparse format
+  - input data can be read in sparse format and in scientific notation
   - vectors are now outputed in sparse format
   - more readable output
   - weight vectors are now accessible on the standard output
