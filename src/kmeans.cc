@@ -591,6 +591,15 @@ buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
     return true;
   }
 
+  static raw_type
+  parse_float(const char *s)
+  {
+    std::istringstream in(s);
+    raw_type res = 0.0;
+    in >> res;
+    return res;
+  }
+
   bool
   KmeansEllipsoidal::add_data_point_coord(boost::char_separator<char>	&sparse_delim,
 					  std::string			&token,
@@ -603,7 +612,7 @@ buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
 
     if (++tok == toks.end())
       {
-	vector.push_back(atof(token.c_str()));
+	vector.push_back(parse_float(token.c_str()));
 	return true;
       }
 
@@ -614,7 +623,7 @@ buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
       vector.push_back(0.0);
 
     const std::string *val_str = &(*tok);
-    raw_type val = atof(val_str->c_str());
+    raw_type val = parse_float(val_str->c_str());
 
     vector.push_back(val);
     return true;
