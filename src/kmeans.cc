@@ -678,21 +678,24 @@ buff << "** (Active centroids: " << nb_active_centroids() << "/" << _k << ") ";
 	    continue;
 	  }
 	first_column = true;
+	size_t col_number = 1;
 	foreach(token, tokens)
 	  {
 	    if (first_column)
 	      {
 		_ids.push_back(token);
 		first_column = false;
+		col_number += token.size() + 1;
 		continue;
 	      }
 	    if (!add_data_point_coord(sparse_delim, token, vector))
 	      {
-		std::cerr << "Input file " << data_filepath << ", l." << line_number;
+		std::cerr << "Input file " << data_filepath << ", line " << line_number << " col. " << col_number;
 		std::cerr << ". Please correct the format of data point id " << _ids.back() << std::endl;
 		std::cerr << "(see the README for more details about the correct format)" << std::endl;
 		return false;
 	      }
+	    col_number += token.size() + 1;
 	  }
 	//vector.push_back(1);
 
