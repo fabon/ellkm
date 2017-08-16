@@ -1,7 +1,4 @@
-========================================================================
-Presentation
-========================================================================
-
+## Presentation
 We propose an extension of the spherical K-means algorithm to deal
 with settings where the number of data points is largely inferior to
 the number of dimensions. We assume the data to lie in local and dense
@@ -16,43 +13,29 @@ spherical K means implementations:
  - http://cran.r-project.org/web/packages/skmeans/index.html
  - http://www.mathworks.com/matlabcentral/fileexchange/32987-the-spherical-k-means-algorithm
 
-========================================================================
-Keywords
-========================================================================
-
+## Keywords
 clustering, high-dimension, feature selection, spherical k-means,
 textmining, information retrieval, C++.
 
-========================================================================
-How to cite
-========================================================================
-
+## How to cite
 [dzogang et al., 2012] An ellipsoidal K-means for document clustering
 12th IEEE International Conference on Data Mining (ICDM'2012) - pp. 221--230
 Dzogang, Fabon and Marsala, Christophe and Lesot, Marie-Jeanne and
 Rifqi, Maria
 
-========================================================================
-Installation
-========================================================================
-
+## Installation
 run in a terminal:
 ```
 cd < ellkm_directory > && ./configure && make
 ```
 
-========================================================================
-Examples
-========================================================================
-
+## Examples
 run in a terminal:
 ```
  bash ./example.sh
 ```
 
-========================================================================
-Description of the packaged binary
-========================================================================
+## Description of the packaged binary
 
 ```
 ./ellkm < data_dir > < sparsity parameter (real \\in [0,0.5], s=0 yields spkm) > < K > [ user_centroids 1 | 0] > log_run
@@ -70,10 +53,7 @@ successively in increasing order of their indices: each run results in a partiti
 that evolve with the dynamics of the input data and demonstrates the evolution of
 communities discovered over time.
 
-========================================================================
-Data format
-========================================================================
-
+## Data format
 Input csv files must be formatted as `,' separated columns, they describe a matrix X of n documents
 embedded in a m-dimensional feature spaces.
 
@@ -101,9 +81,7 @@ where sparse indices start at index 1 and are given in increasing order.
 The number of columns of the N input files need not be equal.
 Ellkm handle the addition of new features over time.
 
-========================================================================
-What has changed
-========================================================================
+## What has changed
 - v2.0)
   - input data can be read in sparse format and in scientific notation
   - vectors are now outputed in sparse format
@@ -117,9 +95,7 @@ What has changed
   - a different seed (given by `time(0)`) is now used for each run
   - a bug led to the double insertion of the last point from each csv dataset.
 
-========================================================================
-Upcoming work
-========================================================================
+## Upcoming work
  - command line options : maximum number of iteration (default to 20), minimum
    threshold value for objective function (default to 10^(-9)). Now these options needs to be
    specified at compile time (-D MAX_STEPS=XX -D MIN_THRESHOLD=XX)
